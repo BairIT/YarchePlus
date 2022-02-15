@@ -1,0 +1,25 @@
+
+import math
+import re
+
+response.xpath("//div[contains(text(), 'Акция')]")
+price = response.xpath('//div[@class = "product-cart__price"]').get()
+
+prices = re.findall('\d*\,\d*',price)
+if type(prices) is list:
+   for i in prices:
+       i = i.replace(',', '.')
+       i = float(i)
+       prices_float.append(i)
+
+if price_float[0] > price_float[1]:
+     round(price_float[1], 1)
+
+
+   if response.xpath("//div[contains(text(), 'Акция')]"):
+      if
+price = float(price)
+string = str(price)
+string.replace('.0','')
+ 
+ 
