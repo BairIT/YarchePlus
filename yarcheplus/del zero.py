@@ -13,6 +13,7 @@ for i in range(len(list_str)):
     list_str[i] = float(list_str[i])
     list_str[i] = round(list_str[i], 1)
 print('список вещественных чисел : ' + '\n', list_str)
+print(len(list_str))
 
 price = list_str[0]
 price_promo = list_str[1]

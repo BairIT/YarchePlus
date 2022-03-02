@@ -18,8 +18,8 @@ NEWSPIDER_MODULE = 'yarcheplus.spiders'
 # # FEED_FORMAT = "csv"
 # # FEED_URI = "yarcheplus_product.csv"
 #
-with open('/home/hooch/PycharmProjects/YarchePlus/yarcheplus/config.json', 'r') as fs:
-    data = json.load(fs)
+# with open('/home/hooch/PycharmProjects/YarchePlus/config.json', 'r') as fs:
+#     data = json.load(fs)
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'yarcheplus (+http://www.yourdomain.com)'
@@ -40,7 +40,7 @@ ROBOTSTXT_OBEY = True
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-#COOKIES_ENABLED = False
+COOKIES_ENABLED = True
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
@@ -55,15 +55,33 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'yarcheplus.middlewares.YarcheplusSpiderMiddleware': 543,
-#}
+SPIDER_MIDDLEWARES = {
+   'yarcheplus.middlewares.YarcheplusSpiderMiddleware': 543,
+}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'yarcheplus.middlewares.YarcheplusDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   'yarcheplus.middlewares.YarcheplusDownloaderMiddleware': 543,
+}
+#
+#
+DOWNLOADER_MIDDLEWARES.update({
+    'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
+    'scrapy_cookies.downloadermiddlewares.cookies.CookiesMiddleware': 700,
+})
+
+
+COOKIES_DEBUG = True
+COOKIES_PERSISTENCE = True
+COOKIES_PERSISTENCE_DIR = 'cookies'
+
+# ------------------------------------------------------------------------------
+# IN MEMORY STORAGE
+# ------------------------------------------------------------------------------
+
+# COOKIES_STORAGE = 'scrapy_cookies.storage.in_memory.InMemoryStorage'
+
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -73,10 +91,10 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-    'yarcheplus.pipelines.PricePipeline': 300,
-
-}
+# ITEM_PIPELINES = {
+#     'yarcheplus.pipelines.PricePipeline': 300,
+#
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
