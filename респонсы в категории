@@ -1,0 +1,8 @@
+ response.xpath('//span[@itemprop="name"]/text()').getall()[-1]
+ 
+ response.css('img::attr(alt)').get()
+ 
+ 
+ 
+ e
+
