@@ -1,0 +1,6 @@
+
+
+html = response.text
+
+root = BeautifulSoup(html, 'html.parser')
+a = root.find('a',draggable='true')
