@@ -28,7 +28,6 @@ class yarcherCrawler(scrapy.Spider):
         print('begin')
         category_list = response.xpath('//a[contains(@href,"category")]')
 
-
         for i in category_list:
             dict_attrib = i.attrib
             if 'style' in dict_attrib:
@@ -52,7 +51,6 @@ class yarcherCrawler(scrapy.Spider):
                 pass
             else:
                 href1 = 'https://yarcheplus.ru' + dict_attrib['href']
-
                 print('ccылка каталога', href1)
                 name_2 = i.css('img').attrib['title']
                 print('список каталогов : ')

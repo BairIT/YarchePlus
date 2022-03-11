@@ -48,13 +48,14 @@ COOKIES_ENABLED = True
 # Override the default request headers:
 # DEFAULT_REQUEST_HEADERS = data['headers']
 
-   #  {
-   # 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-   # 'Accept-Language': 'en',
-   #  }
+#  {
+# 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+# 'Accept-Language': 'en',
+#  }
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+
 SPIDER_MIDDLEWARES = {
    'yarcheplus.middlewares.YarcheplusSpiderMiddleware': 543,
 }
@@ -85,16 +86,18 @@ COOKIES_PERSISTENCE_DIR = 'cookies'
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-#EXTENSIONS = {
+# EXTENSIONS = {
 #    'scrapy.extensions.telnet.TelnetConsole': None,
 #}
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#     'yarcheplus.pipelines.PricePipeline': 300,
-#
-# }
+ITEM_PIPELINES = {
+    'yarcheplus.pipelines.SkuStatusPipeline': 100,
+    'yarcheplus.pipelines.PricePipeline': 200,
+    'yarcheplus.pipelines.SkuPackedPipeline': 300,
+
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

@@ -15,24 +15,80 @@ from selenium.webdriver import Firefox, FirefoxOptions
 import time
 from bs4 import BeautifulSoup
 import requests as req
+
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 
 url = 'https://yarcheplus.ru/category'
+
 with open('/home/hooch/PycharmProjects/YarchePlus/config.json', 'r') as fil:
     jsfilconfig = json.load(fil)
 address_input = jsfilconfig['tt_id']
-print('c файла адрес: ', address_input)
+
+
+def selen_cookies_yarche(address_input):
+    driver_path = '/home/hooch/PycharmProjects/YarchePlus/geckodriver'
+    options = FirefoxOptions()
+    driver = Firefox(executable_path=driver_path, options=options)
+    driver.get(url)
+    time.sleep(2)
+
+    address_location = driver.find_element_by_xpath('//button[@title ="Уточните адрес доставки"]')
+    address_location.click()
+
+    address = driver.find_element_by_xpath('//input[@name = "receivedAddress"]')
+    address.send_keys(address_input)
+    address.send_keys(Keys.RETURN)
+    time.sleep(2)
+
+    accept_button = driver.find_element_by_xpath('//span[text()="Подтвердить"]')
+    accept_button.click()
+    print('адрес вбит')
+
+    cooks = driver.get_cookies()
+    print('получаем куки с селениума')
+
+    correct_cookies_from_selenium = {}
+    for i in cooks:
+        key_data = i['name']
+        value_data = i['value']
+        correct_cookies_from_selenium.update({key_data: value_data})
+    print('куки скорректированы : ', correct_cookies_from_selenium)
+    with open('cookies', 'w') as file_cookies:
+        json.dump(correct_cookies_from_selenium, file_cookies)
+    print('записано в куки')
+    driver.quit()
+
+
+def get_cookies_yarche():
+    if isfile('cookies'):
+        print('есть куки')
+        with open('cookies', 'r') as file_cookies:
+            fileCook = json.load(file_cookies)
+            print('считано с куков : ', fileCook)
+        return fileCook
+    print('нет куков')
+    selen_cookies_yarche(address_input)
+    with open('cookies', 'r') as file_cookies:
+        fileCook = json.load(file_cookies)
+        print('считано с куков послесоздания: ', fileCook)
+    return fileCook
+
+#
+# def write_cookies_yarche():
+#     input('stop')
+#     with open('cookies', 'w') as file_cookies:
+#         file_selen = selen_cookies_yarche(address_input)
+#         fileCook = json.dump(file_selen, file_cookies)
+#     print('записано в куки : ', fileCook)
+#     return fileCook
 
 
 class YarcheplusSpiderMiddleware:
 
-    # headers = jsfilconfig['headers']
-    # print(headers)
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
-
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -41,79 +97,12 @@ class YarcheplusSpiderMiddleware:
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         return s
 
-    def get_cookies_yarch(self, address_input):
-        driver_path = '/home/hooch/PycharmProjects/YarchePlus/geckodriver'
-        options = FirefoxOptions()
-        driver = Firefox(executable_path=driver_path, options=options)
-        driver.get(url)
-        time.sleep(2)
-
-        address_location = driver.find_element_by_xpath('//button[@title ="Уточните адрес доставки"]')
-        address_location.click()
-
-        address = driver.find_element_by_xpath('//input[@name = "receivedAddress"]')
-        address.send_keys(address_input)
-        address.send_keys(Keys.RETURN)
-        time.sleep(2)
-
-        accept_button = driver.find_element_by_xpath('//span[text()="Подтвердить"]')
-        accept_button.click()
-        print('адрес вбит')
-
-        cooks = driver.get_cookies()
-        print('получаем куки с селениума')
-
-        correct_cookies_from_selenium = {}
-        for i in cooks:
-            key_data = i['name']
-            value_data = i['value']
-            correct_cookies_from_selenium.update({key_data: value_data})
-        print('куки скорректированы : ', correct_cookies_from_selenium)
-        return correct_cookies_from_selenium
-
-    def test_cookies(self, file_cookies):
-        headers = {
-            'User-Agent': jsfilconfig['headers']
-        }
-        print(headers)
-        page = req.get(url, cookies=file_cookies, headers=headers)
-        data = BeautifulSoup(page.text, 'html.parser')
-        button = data.find_all('button')
-        if button[1] == jsfilconfig['tt_id']:
-            print('Да искомый адрес найден, поехали далее ', jsfilconfig['tt_id'])
-            return None
-        else:
-            print('нет адреса в кнопке')
-            pass
-            # else:
-            #     print('получается вообще не нашёл данного адреса вообще')
-            #     continue
-
     def process_spider_input(self, response, spider):
-        quetion_address = response.xpath('//button[@title="Уточните адрес доставки"]')
-        if quetion_address:
-            print('"уточните адрес доставки" есть' + '\n')
-            if not isfile('cookies'):
-                print('нет куков')
-                save_cook = self.get_cookies_yarch(address_input)
-                print('куки : ', save_cook)
-                with open('cookies', 'w+') as file_cook:
-                    json.dump(save_cook, file_cook, indent=4)
-                return self.test_cookies(file_cook)
-            else:
-                print('куки есть')
-                pass
+            # Called for each response that goes through the spider
+            # middleware and into the spider.
 
-        #     print('обратно на страницу для получения куков' + '\n')
-        #     self.get_cookies_yarch(self.jsfilconfig['tt_id'])
-        #     return None
-        #
-        # # scrapy_cookies.storage.BaseStorage =
-        # Called for each response that goes through the spider
-        # middleware and into the spider.
-
-        # Should return None or raise an exception.
-        #     return None
+            # Should return None or raise an exception.
+            return None
 
     def process_spider_output(self, response, result, spider):
         # Called with the results returned from the Spider, after
@@ -134,8 +123,9 @@ class YarcheplusSpiderMiddleware:
         # Called with the start requests of the spider, and works
         # similarly to the process_spider_output() method, except
         # that it doesn’t have a response associated.
-
         # Must return only requests (not items).
+        # save_cook = selen_cookies_yarche(address_input)
+        # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', save_cook)
         for r in start_requests:
             yield r
 
