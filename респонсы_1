@@ -1,5 +1,0 @@
-
-
-d = a[4].xpath('//div/picture')
-a = response.xpath('//a[contains(@href,"catalog")]')
-
