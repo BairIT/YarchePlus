@@ -7,7 +7,7 @@
          "part_number" : "p1",
                "tt_id" : "Россия, Москва, улица Вересаева, 10",
           "categories" :  "",
-    "sku_images_enable": "True",
+    "sku_images_enable": "False",
    "sku_parameters_enable" : "True",
              "promo_only": "False",
          "delay_range_s" : 0,

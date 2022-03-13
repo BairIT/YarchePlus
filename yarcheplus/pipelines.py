@@ -10,13 +10,30 @@ from scrapy.exceptions import DropItem
 import re
 
 
+def price_vs_price_promo(price, price_promo):
+    print(' пришёл в сравнение цен ')
+    if price < price_promo:
+        print('случай сравнения невозможен, т.к промо выше обычной')
+        price = ''
+        price_promo = ''
+        return price, price_promo
+
+    else:
+        print('возвращаю, price : ', price)
+        print('возвращаю, price : ', price_promo)
+        return price, price_promo
+
+
 class SkuStatusPipeline(object):
     def process_item(self, item, spider):
-        if item['sku_status'] == 'Нет в наличии':
+        print('пришёл в статус')
+        if item['sku_status'] == '':
+            print('item[sku_status] = ''')
             item['sku_status'] = 0
             return item
         else:
-            item['sku_status'] = 'есть в наличии'
+            print(f"item[sku_status] = {item['sku_status']}")
+            item['sku_status'] = 1
             return item
 
 
@@ -25,6 +42,7 @@ class PricePipeline(object):
     pattern = '.0'
 
     def process_item(self, item, spider):
+        print('пришёл в цену')
         if item['price']:
             price = item['price']
             price = price.replace(' ', '')
@@ -46,17 +64,44 @@ class PricePipeline(object):
             return DropItem('missing price')
 
 
-class SkuPackedPipeline(object):
+class PricePromoPipeline(object):
+    pattern = '.0'
+
     def process_item(self, item, spider):
-        if item['sku_packed'] == 'Вес':
-            item['sku_packed'] = 0
-            return item
-        elif item['sku_packed'] == 'Объём':
-            item['sku_packed'] = 1
-            return item
+        print('пришёл в цену промо')
+        if item['price_promo']:
+            price_promo = item['price_promo']
+            price_promo = price_promo.replace(' ', '')
+            price_promo = re.findall('\d*\,\d*', price_promo)
+            print(price_promo)
+            price_promo = price_promo[0].replace(',', '.')
+            price_promo = round(float(price_promo), 1)
+            price_promo = str(price_promo)
+            price_promo = price_promo.replace(self.pattern, '')
+            if re.search(self.pattern, price_promo):
+                item['price_promo'] = int(float(price_promo))
+                print(item['price_promo'])
+                return item
+            else:
+                print(f'нету целого числа в {price_promo}')
+                item['price_promo'] = price_promo
+                return item
         else:
-            item['sku_packed'] = 2
+            item['price_promo'] = 'нету прайс цены'
             return item
+            # return DropItem(f'missing price {item}')
+
+# class SkuPackedPipeline(object):
+#     def process_item(self, item, spider):
+#         if item['sku_packed'] == 'Вес':
+#             item['sku_packed'] = 0
+#             return item
+#         elif item['sku_packed'] == 'Объём':
+#             item['sku_packed'] = 1
+#             return item
+#         else:
+#             item['sku_packed'] = 2
+#             return item
 
 
 

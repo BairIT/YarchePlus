@@ -73,7 +73,7 @@ DOWNLOADER_MIDDLEWARES.update({
 })
 
 
-COOKIES_DEBUG = True
+# COOKIES_DEBUG = True
 COOKIES_PERSISTENCE = True
 COOKIES_PERSISTENCE_DIR = 'cookies'
 
@@ -95,7 +95,8 @@ COOKIES_PERSISTENCE_DIR = 'cookies'
 ITEM_PIPELINES = {
     'yarcheplus.pipelines.SkuStatusPipeline': 100,
     'yarcheplus.pipelines.PricePipeline': 200,
-    'yarcheplus.pipelines.SkuPackedPipeline': 300,
+    'yarcheplus.pipelines.PricePromoPipeline': 300,
+    # 'yarcheplus.pipelines.SkuPackedPipeline': 300,
 
 }
 
